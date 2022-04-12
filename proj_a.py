@@ -119,3 +119,32 @@ class Transformacje:
     
         return x00, y00, h 
     
+    def u92(self, fi, lam, m_0):
+        '''
+        Układ 1992 - algorytm transformacji współrzędnych geodezyjnych:
+        długości, szerokości i wysokości elipsoidalnej (fi, lam, h) 
+        na współrzedne płaskie w układzie 1992 (X92, Y92, H)
+
+        '''
+      
+        e_2 = self.ecc2/(1-self.ecc2)
+        N = self.a/(sqrt(1-self.ecc2 * sin(fi)**2))
+        t = tan(fi)
+        n2 = e_2 * cos(lam)**2
+        lam_0 = radians(19)
+        l = lam - lam_0
+        
+        A_0 = 1 - (self.ecc2/4) - (3*(self.ecc2**2))/64 - (5*(self.ecc2**3))/256
+        A_2 = 3/8 * (self.ecc2 + ((self.ecc2**2)/4) + ((15*self.ecc2**3)/128))
+        A_4 = 15/256 * (self.ecc2**2 + (3*(self.ecc2**3))/4)
+        A_6 = (35*(self.ecc2**3))/3072
+        
+        sigma = self.a* ((A_0*fi) - (A_2*sin(2*fi)) + (A_4*sin(4*fi)) - (A_6*sin(6*fi)))
+        
+        x = sigma + ((l**2)/2) * (N*sin(fi)*cos(fi)) * (1 + ((l**2)/12) * ((cos(fi))**2) * (5 - t**2 + 9*n2 + (4*n2**2)) + ((l**4)/360) * ((cos(fi))**4) * (61 - (58*(t**2)) + (t**4) + (270*n2) - (330 * n2 *(t**2))))
+        y = l * (N*cos(fi)) * (1 + ((((l**2)/6) * (cos(fi))**2) * (1-(t**2) + n2)) +  (((l**4)/(120)) * (cos(fi)**4)) * (5 - (18 * (t**2)) + (t**4) + (14*n2) - (58*n2*(t**2))))
+        
+        x92 = round(x * m_0 - 5300000, 3)
+        y92 = round(y * m_0 + 500000, 3)   
+        
+        return x92, y92 
