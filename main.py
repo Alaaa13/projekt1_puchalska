@@ -24,6 +24,6 @@ for i in range(rows):
   
     tablica_ze_wsp[i,0:3] = flh[i]
     tablica_ze_wsp[i,3:6] = xy2000[i]
-
+    tablica_ze_wsp[i,6:8] = xy92[i]
     
 np.savetxt("wsp_FLH.txt", tablica_ze_wsp, delimiter=',')
